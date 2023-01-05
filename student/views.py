@@ -1,30 +1,28 @@
-# GenericAPIView and Model Mixin
 from .models import Student
 from .serializers import StudentSerializer
-from rest_framework.generics import GenericAPIView
-from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 
 
-class LCapi(GenericAPIView, ListModelMixin, CreateModelMixin):
+class StudentList(ListAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-
-class RUDapi(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
+class StudentCreate(CreateAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
 
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
+class StudentRetrieve(RetrieveAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
 
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+
+class StudentUpdate(UpdateAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+
+
+class StudentDestroy(DestroyAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
