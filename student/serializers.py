@@ -9,7 +9,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
 
 class SchoolSerializer(serializers.ModelSerializer):
-    student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
+    student = serializers.PrimaryKeyRelatedField(many=True, queryset=Student.objects.all())
 
     class Meta:
         model = School

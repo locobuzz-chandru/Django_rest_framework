@@ -8,6 +8,6 @@ class Student(models.Model):
 
 
 class School(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ManyToManyField(Student)
     school_name = models.TextField()
     joined_on = models.DateTimeField(auto_now_add=True)
