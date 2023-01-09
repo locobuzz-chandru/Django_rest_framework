@@ -6,7 +6,7 @@ from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveMode
     DestroyModelMixin
 
 
-class LCStudentAPI(GenericAPIView, ListModelMixin, CreateModelMixin):
+class ListCreateStudentAPI(GenericAPIView, ListModelMixin, CreateModelMixin):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 
@@ -17,7 +17,7 @@ class LCStudentAPI(GenericAPIView, ListModelMixin, CreateModelMixin):
         return self.create(request, *args, **kwargs)
 
 
-class LCSchoolAPI(GenericAPIView, ListModelMixin, CreateModelMixin):
+class ListCreateSchoolAPI(GenericAPIView, ListModelMixin, CreateModelMixin):
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
 
@@ -28,7 +28,7 @@ class LCSchoolAPI(GenericAPIView, ListModelMixin, CreateModelMixin):
         return self.create(request, *args, **kwargs)
 
 
-class RUDStudentAPI(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
+class ReadUpdateDeleteStudentAPI(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 
@@ -42,7 +42,7 @@ class RUDStudentAPI(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, Destro
         return self.destroy(request, *args, **kwargs)
 
 
-class RUDSchoolAPI(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
+class ReadUpdateDeleteSchoolAPI(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
 
