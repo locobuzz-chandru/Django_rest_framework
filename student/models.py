@@ -8,6 +8,6 @@ class Student(models.Model):
 
 
 class School(models.Model):
-    student = models.OneToOneField(Student, on_delete=models.CASCADE, primary_key=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     school_name = models.TextField()
-    joined_at = models.DateTimeField(auto_now_add=True)
+    joined_on = models.DateTimeField(auto_now_add=True)
