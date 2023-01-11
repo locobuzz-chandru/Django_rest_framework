@@ -1,7 +1,7 @@
 from django.urls import path, include
-
 from student.views import StudentModelViewSet, SchoolModelViewSet
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView, TokenObtainPairView
 
 # Creating Router Object
 router = DefaultRouter()
@@ -13,5 +13,7 @@ router.register('school', SchoolModelViewSet, basename='school')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('gettoken/', TokenObtainPairView.as_view()),
+    path('refreshtoken/', TokenRefreshView.as_view()),
+    path('verifytoken/', TokenVerifyView.as_view()),
 ]
