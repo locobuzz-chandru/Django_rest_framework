@@ -1,43 +1,35 @@
-import logging
 import json
-from .redis import RedisCode
+from .redis import Redis
 
 
-class Cache:
+class RedisSchool:
+
     def __init__(self):
-        self.cache = RedisCode()
+        self.redis = Redis()
 
-    def get_school(self, student_id):
-        try:
-            schools = self.cache.extract(str(student_id))
-            if schools is not None:
-                return json.loads(schools)
-            return {}
+    def save(self, student_id, school_name):
+        school_dict = self.get(student_id)
+        school_id = school_name.get('id')
+        school_dict.update({school_id: school_name})
+        self.redis.setter(str(student_id), json.dumps(school_dict))
 
-        except Exception as e:
-            logging.error(e)
+    def get(self, student_id):
+        schools = self.redis.getter(str(student_id))
+        if schools is not None:
+            return json.loads(schools)
+        return {}
 
-    def add_school(self, student_id, school):
-        try:
-            school_dict = self.get_school(student_id)
-            school_dict.update({school.get('id'): school})
-            self.cache.save(str(student_id), json.dumps(school_dict))
-        except Exception as e:
-            logging.error(e)
-
-    def update_book(self, student_id, schools):
+    def update(self, schools, student_id):
         school_id = str(schools.get('id'))
-        schools_dict = self.get_school(student_id)
+        schools_dict = self.get(student_id)
         school = schools_dict.get(school_id)
         if school is not None:
             schools_dict.update({school_id: schools})
-            self.cache.save(student_id, json.dumps(schools_dict))
+            self.redis.setter(str(student_id), json.dumps(schools_dict))
 
-    def delete_note(self, student_id, id):
-        try:
-            school_dict = self.get_school(student_id)
-            school_dict.pop(str(id))
-            self.cache.save(str(student_id), json.dumps(school_dict))
-
-        except Exception as error:
-            logging.exception(error)
+    def delete(self, student_id, school_id):
+        schools_dict = self.get(student_id)
+        school = schools_dict.get(str(school_id))
+        if school is not None:
+            schools_dict.pop(str(school_id))
+            self.redis.setter(str(student_id), json.dumps(schools_dict))
