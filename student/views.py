@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from rest_framework.views import APIView
 from .models import Student, School
 from .serializers import StudentSerializer, SchoolSerializer
@@ -8,13 +9,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from .utils import RedisSchool
 import logging
+from django.shortcuts import render
+from .tasks import send_mail_func
 
 
 class StudentModelViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
 # class SchoolModelViewSet(viewsets.ModelViewSet):
@@ -42,8 +45,10 @@ class SchoolClass(APIView):
             # school = School.objects.filter(student=request.data.get('student'))
             # serializer = SchoolSerializer(school, many=True)
             redis_data = RedisSchool().get(request.data.get('student'))
-            return Response({"message": "Data Retrieved", "status": 200, "data": redis_data.values()},
-                            status=status.HTTP_200_OK)
+            send_mail_func.delay()
+            return HttpResponse('sent')
+            # return Response({"message": "Data Retrieved", "status": 200, "data": redis_data.values()},
+            #                 status=status.HTTP_200_OK)
         except Exception as e:
             logging.exception(e)
             return Response({"message": str(e), "status": 400, "data": {}}, status=status.HTTP_400_BAD_REQUEST)
@@ -71,3 +76,8 @@ class SchoolClass(APIView):
         except Exception as e:
             logging.exception(e)
             return Response({"message": str(e), "status": 400, "data": {}}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# celery -A api.celery worker --pool=solo -l info
+# celery -A api beat -l INFO
+# celery -A api beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler

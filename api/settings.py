@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'student',
+    'django_celery_results',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -130,4 +133,29 @@ SIMPLE_JWT = {
 }
 
 # CELERY SETTINGS
-# REDIS_CONFIG = {"host": 'localhost', "port": 6379, "db": 0}
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Kolkata'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+
+
+# CELERY BEAT
+# CELERY_BEAT_SCHEDULE = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_BEAT_SCHEDULE = {
+    'send-email-task': {
+        'task': 'student.tasks.send_mail_func',
+        'schedule': crontab(hour=19, minute=25),
+    },
+}
+
+
+# SMTP Settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'chandru151998@gmail.com'
+EMAIL_HOST_PASSWORD = 'enyavbismgajflsn'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'Celery <chandru151998@gmail.com>'
